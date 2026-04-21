@@ -95,25 +95,3 @@ petclinic-platform/
 |-------------|---------------|-----|---------|
 | dev | `petclinic-dev` | db.t4g.micro, single-AZ (free tier) | Development & testing |
 | prod | `petclinic-prod` | db.t4g.micro, single-AZ (free tier) | Production |
-
-## Quick Start
-
-```bash
-# 1. Bootstrap Terraform state backend (one-time)
-./scripts/bootstrap-state.sh
-
-# 2. Deploy dev environment infrastructure
-cd terraform/environments/dev
-terraform init
-terraform plan -out plan.out
-terraform apply plan.out
-
-# 3. Connect to cluster
-aws eks update-kubeconfig --name petclinic-dev --region eu-central-1
-
-# 4. Install ArgoCD
-kubectl apply -f k8s/argocd/install/
-
-# 5. Deploy services via ArgoCD (auto-sync for dev)
-kubectl apply -f k8s/argocd/applications/dev/
-```
