@@ -114,7 +114,7 @@ if [[ "${BUCKET_EXISTS}" == "true" ]]; then
   ENCRYPTION_STATUS=$(aws s3api get-bucket-encryption \
     --bucket "${BUCKET_NAME}" \
     --region "${REGION}" \
-    --query 'ServerSideEncryptionConfiguration.Rules[0].ServerSideEncryptionByDefault.SSEAlgorithm' \
+    --query 'ServerSideEncryptionConfiguration.Rules[0].ApplyServerSideEncryptionByDefault.SSEAlgorithm' \
     --output text 2>/dev/null || echo "")
 
   if [[ "${ENCRYPTION_STATUS}" == "AES256" ]]; then
