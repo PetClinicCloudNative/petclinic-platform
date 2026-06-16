@@ -1,2 +1,10 @@
-# PETPLAT-1: Dev environment backend — placeholder
-# Backend configuration will be added in PETPLAT-3.
+# PETPLAT-3: Dev environment backend
+terraform {
+  backend "s3" {
+    bucket         = "petclinic-terraform-state-522826274224"
+    key            = "petclinic/dev/terraform.tfstate"
+    region         = "eu-central-1"
+    dynamodb_table = "petclinic-terraform-locks"
+    encrypt        = true
+  }
+}
