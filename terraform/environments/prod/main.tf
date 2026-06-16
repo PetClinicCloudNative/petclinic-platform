@@ -1,2 +1,8 @@
-# PETPLAT-1: Prod environment root module — placeholder
-# Resources will be added in subsequent stories.
+# PETPLAT-5: Prod environment root module
+locals {
+  common_tags = {
+    Project     = var.project
+    Environment = var.environment
+    ManagedBy   = "terraform"
+  }
+}
