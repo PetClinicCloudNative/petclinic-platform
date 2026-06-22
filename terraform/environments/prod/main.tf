@@ -33,3 +33,17 @@ module "eks" {
   node_max_size              = 4
   node_desired_size          = 2
 }
+
+# PETPLAT-27: Wire RDS module into prod environment
+module "rds" {
+  source                  = "../../modules/rds"
+  project                 = var.project
+  environment             = var.environment
+  subnet_ids              = module.vpc.subnet_ids
+  rds_security_group_id   = module.vpc.rds_sg_id
+  instance_class          = "db.t4g.micro"
+  multi_az                = false
+  skip_final_snapshot     = false
+  backup_retention_period = 30
+  tags                    = local.common_tags
+}
