@@ -77,3 +77,22 @@ resource "aws_security_group_rule" "rds_vpc_ingress" {
   cidr_blocks       = ["10.0.0.0/16"]
   security_group_id = module.vpc.rds_sg_id
 }
+
+# PETPLAT-29: IAM policy for AWS Load Balancer Controller
+resource "aws_iam_policy" "lb_controller" {
+  name   = "${var.project}-${var.environment}-lb-controller-policy"
+  policy = file("${path.module}/../../policies/aws-load-balancer-controller-policy.json")
+  tags   = local.common_tags
+}
+
+# PETPLAT-29: IRSA role for AWS Load Balancer Controller
+module "lb_controller_irsa" {
+  source            = "../../modules/irsa"
+  role_name         = "${var.project}-${var.environment}-lb-controller-role"
+  namespace         = "kube-system"
+  service_account   = "aws-load-balancer-controller"
+  oidc_provider_arn = module.eks.oidc_provider_arn
+  oidc_provider_url = module.eks.oidc_provider_url
+  policy_arns       = [aws_iam_policy.lb_controller.arn]
+  tags              = local.common_tags
+}
