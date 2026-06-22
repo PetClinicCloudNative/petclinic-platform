@@ -52,3 +52,17 @@ module "ecr" {
   image_tag_mutability = "MUTABLE"
   tags                 = local.common_tags
 }
+
+# PETPLAT-25: Wire RDS module into dev environment
+module "rds" {
+  source                  = "../../modules/rds"
+  project                 = var.project
+  environment             = var.environment
+  subnet_ids              = module.vpc.subnet_ids
+  rds_security_group_id   = module.vpc.rds_sg_id
+  instance_class          = "db.t4g.micro"
+  multi_az                = false
+  skip_final_snapshot     = true
+  backup_retention_period = 7
+  tags                    = local.common_tags
+}
