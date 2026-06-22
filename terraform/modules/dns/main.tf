@@ -28,11 +28,12 @@ resource "aws_route53_record" "validation" {
     }
   }
 
-  zone_id = aws_route53_zone.main.zone_id
-  name    = each.value.name
-  type    = each.value.type
-  ttl     = 60
-  records = [each.value.value]
+  zone_id         = aws_route53_zone.main.zone_id
+  name            = each.value.name
+  type            = each.value.type
+  ttl             = 60
+  records         = [each.value.value]
+  allow_overwrite = true
 }
 
 resource "aws_acm_certificate_validation" "main" {

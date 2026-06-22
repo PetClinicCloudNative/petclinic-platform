@@ -96,3 +96,10 @@ module "lb_controller_irsa" {
   policy_arns       = [aws_iam_policy.lb_controller.arn]
   tags              = local.common_tags
 }
+
+# PETPLAT-32: Wire DNS module into dev environment
+module "dns" {
+  source      = "../../modules/dns"
+  domain_name = "cloud.buildwithmanish.online"
+  tags        = local.common_tags
+}
