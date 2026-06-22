@@ -24,3 +24,16 @@ output "oidc_provider_url" {
   description = "OIDC provider URL without https:// prefix, for IRSA trust policies"
   value       = trimprefix(aws_iam_openid_connect_provider.eks.url, "https://")
 }
+
+# ---------------------------------------------------------------
+# Node Group Outputs (PETPLAT-13)
+# ---------------------------------------------------------------
+output "node_group_name" {
+  description = "Name of the EKS managed node group"
+  value       = aws_eks_node_group.main.node_group_name
+}
+
+output "node_role_arn" {
+  description = "ARN of the IAM role used by EKS worker nodes"
+  value       = aws_iam_role.eks_node.arn
+}

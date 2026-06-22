@@ -85,3 +85,82 @@ resource "aws_iam_openid_connect_provider" "eks" {
 
   tags = local.common_tags
 }
+
+# ---------------------------------------------------------------
+# Node IAM Role
+# ---------------------------------------------------------------
+resource "aws_iam_role" "eks_node" {
+  name = "${var.project}-${var.environment}-eks-node-role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Principal = {
+          Service = "ec2.amazonaws.com"
+        }
+        Action = "sts:AssumeRole"
+      }
+    ]
+  })
+
+  tags = merge(local.common_tags, {
+    Name = "${var.project}-${var.environment}-eks-node-role"
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "eks_worker_node_policy" {
+  role       = aws_iam_role.eks_node.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy"
+}
+
+resource "aws_iam_role_policy_attachment" "eks_cni_policy" {
+  role       = aws_iam_role.eks_node.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"
+}
+
+resource "aws_iam_role_policy_attachment" "eks_container_registry_policy" {
+  role       = aws_iam_role.eks_node.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
+}
+
+# ---------------------------------------------------------------
+# Managed Node Group
+# ---------------------------------------------------------------
+resource "aws_eks_node_group" "main" {
+  cluster_name    = aws_eks_cluster.main.name
+  node_group_name = var.node_group_name != null ? var.node_group_name : "${var.project}-${var.environment}-nodes"
+  node_role_arn   = aws_iam_role.eks_node.arn
+  subnet_ids      = var.subnet_ids
+  instance_types  = var.node_instance_types
+  ami_type        = var.node_ami_type
+  capacity_type   = var.node_capacity_type
+  disk_size       = var.node_disk_size
+
+  scaling_config {
+    desired_size = var.node_desired_size
+    max_size     = var.node_max_size
+    min_size     = var.node_min_size
+  }
+
+  labels = merge(
+    {
+      environment = var.environment
+      managed-by  = "terraform"
+    },
+    var.node_labels
+  )
+
+  update_config {
+    max_unavailable = 1
+  }
+
+  depends_on = [
+    aws_iam_role_policy_attachment.eks_worker_node_policy,
+    aws_iam_role_policy_attachment.eks_cni_policy,
+    aws_iam_role_policy_attachment.eks_container_registry_policy,
+  ]
+
+  tags = local.common_tags
+}
