@@ -61,5 +61,5 @@ package-lock.json
 tmp/
 
 # Terraform plan artifacts
-tfplan
+tfplan*
 *.tfplan
