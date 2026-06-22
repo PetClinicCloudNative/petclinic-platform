@@ -33,3 +33,22 @@ module "eks" {
   node_max_size              = 4
   node_desired_size          = 2
 }
+
+# PETPLAT-20: Wire ECR module into dev environment
+module "ecr" {
+  source               = "../../modules/ecr"
+  project              = var.project
+  environment          = var.environment
+  service_names        = [
+    "config-server",
+    "discovery-server",
+    "api-gateway",
+    "customers-service",
+    "visits-service",
+    "vets-service",
+    "genai-service",
+    "admin-server",
+  ]
+  image_tag_mutability = "MUTABLE"
+  tags                 = local.common_tags
+}
