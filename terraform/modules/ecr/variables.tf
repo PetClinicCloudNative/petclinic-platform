@@ -22,3 +22,10 @@ variable "tags" {
   type        = map(string)
   default     = {}
 }
+
+# PETPLAT-19: Tag mutability configuration
+variable "image_tag_mutability" {
+  description = "Tag mutability for ECR repositories: MUTABLE or IMMUTABLE"
+  type        = string
+  default     = "MUTABLE"
+}
