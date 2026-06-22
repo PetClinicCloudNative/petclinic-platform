@@ -71,7 +71,7 @@ resource "aws_db_instance" "main" {
   parameter_group_name   = aws_db_parameter_group.main.name
 
   username = var.master_username
-  password = var.master_password
+  password = random_password.main.result
 
   backup_retention_period = var.backup_retention_period
   skip_final_snapshot     = var.skip_final_snapshot
@@ -79,5 +79,30 @@ resource "aws_db_instance" "main" {
 
   tags = merge(local.common_tags, {
     Name = local.db_identifier
+  })
+}
+
+# ---------------------------------------------------------------
+# Generated Credentials
+# ---------------------------------------------------------------
+resource "random_password" "main" {
+  length  = 16
+  special = true
+}
+
+resource "aws_secretsmanager_secret" "rds" {
+  name        = "petclinic/${var.environment}/rds-credentials"
+  description = "RDS master credentials for ${var.project} ${var.environment}"
+
+  tags = merge(local.common_tags, {
+    Name = "petclinic/${var.environment}/rds-credentials"
+  })
+}
+
+resource "aws_secretsmanager_secret_version" "rds" {
+  secret_id = aws_secretsmanager_secret.rds.id
+  secret_string = jsonencode({
+    username = var.master_username
+    password = random_password.main.result
   })
 }

@@ -69,12 +69,6 @@ variable "master_username" {
   default     = "petclinic"
 }
 
-variable "master_password" {
-  description = "Master database password"
-  type        = string
-  sensitive   = true
-}
-
 variable "tags" {
   description = "Additional tags to apply to all resources"
   type        = map(string)
