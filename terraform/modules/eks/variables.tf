@@ -107,3 +107,12 @@ variable "node_labels" {
   type        = map(string)
   default     = {}
 }
+
+# ---------------------------------------------------------------
+# Access Configuration (PETPLAT-14)
+# ---------------------------------------------------------------
+variable "admin_principal_arns" {
+  description = "IAM principal ARNs to grant cluster admin access via EKS access entries"
+  type        = list(string)
+  default     = []
+}

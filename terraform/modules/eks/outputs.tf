@@ -37,3 +37,11 @@ output "node_role_arn" {
   description = "ARN of the IAM role used by EKS worker nodes"
   value       = aws_iam_role.eks_node.arn
 }
+
+# ---------------------------------------------------------------
+# kubectl Access (PETPLAT-14)
+# ---------------------------------------------------------------
+output "update_kubeconfig_command" {
+  description = "AWS CLI command to configure kubectl for this cluster"
+  value       = "aws eks update-kubeconfig --name ${aws_eks_cluster.main.name} --region ${data.aws_region.current.name}"
+}

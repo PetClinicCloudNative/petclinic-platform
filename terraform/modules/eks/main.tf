@@ -74,6 +74,8 @@ resource "aws_eks_cluster" "main" {
 # ---------------------------------------------------------------
 # OIDC Provider for IRSA
 # ---------------------------------------------------------------
+data "aws_region" "current" {}
+
 data "tls_certificate" "eks_oidc" {
   url = aws_eks_cluster.main.identity[0].oidc[0].issuer
 }
@@ -163,4 +165,31 @@ resource "aws_eks_node_group" "main" {
   ]
 
   tags = local.common_tags
+}
+
+# ---------------------------------------------------------------
+# EKS Access Entries (PETPLAT-14)
+# ---------------------------------------------------------------
+resource "aws_eks_access_entry" "admin" {
+  for_each = toset(var.admin_principal_arns)
+
+  cluster_name  = aws_eks_cluster.main.name
+  principal_arn = each.value
+  type          = "STANDARD"
+
+  tags = local.common_tags
+}
+
+resource "aws_eks_access_policy_association" "admin" {
+  for_each = toset(var.admin_principal_arns)
+
+  cluster_name  = aws_eks_cluster.main.name
+  policy_arn    = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
+  principal_arn = each.value
+
+  access_scope {
+    type = "cluster"
+  }
+
+  depends_on = [aws_eks_access_entry.admin]
 }
