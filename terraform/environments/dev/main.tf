@@ -103,3 +103,14 @@ module "dns" {
   domain_name = "cloud.buildwithmanish.online"
   tags        = local.common_tags
 }
+
+# PETPLAT-33: Wire Secrets module into dev environment
+module "secrets" {
+  source         = "../../modules/secrets"
+  project        = var.project
+  environment    = var.environment
+  openai_api_key = var.openai_api_key
+  git_username   = var.git_username
+  git_password   = var.git_password
+  tags           = local.common_tags
+}
