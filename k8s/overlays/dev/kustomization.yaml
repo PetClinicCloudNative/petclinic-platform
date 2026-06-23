@@ -1,0 +1,43 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+# Dev overlay: patches all namespaced resources to petclinic-dev.
+# Base manifests already default to 1 replica, so no replica patches needed.
+# Namespaces and external-secrets are applied separately (bootstrap resources).
+# rds-config.yaml is a shared ConfigMap applied independently.
+namespace: petclinic-dev
+
+resources:
+  - ../../base/config-server/configmap.yaml
+  - ../../base/config-server/deployment.yaml
+  - ../../base/config-server/service.yaml
+  - ../../base/config-server/serviceaccount.yaml
+  - ../../base/discovery-server/configmap.yaml
+  - ../../base/discovery-server/deployment.yaml
+  - ../../base/discovery-server/service.yaml
+  - ../../base/discovery-server/serviceaccount.yaml
+  - ../../base/api-gateway/configmap.yaml
+  - ../../base/api-gateway/deployment.yaml
+  - ../../base/api-gateway/service.yaml
+  - ../../base/api-gateway/serviceaccount.yaml
+  - ../../base/customers-service/configmap.yaml
+  - ../../base/customers-service/deployment.yaml
+  - ../../base/customers-service/service.yaml
+  - ../../base/customers-service/serviceaccount.yaml
+  - ../../base/visits-service/configmap.yaml
+  - ../../base/visits-service/deployment.yaml
+  - ../../base/visits-service/service.yaml
+  - ../../base/visits-service/serviceaccount.yaml
+  - ../../base/vets-service/configmap.yaml
+  - ../../base/vets-service/deployment.yaml
+  - ../../base/vets-service/service.yaml
+  - ../../base/vets-service/serviceaccount.yaml
+  - ../../base/genai-service/configmap.yaml
+  - ../../base/genai-service/deployment.yaml
+  - ../../base/genai-service/service.yaml
+  - ../../base/genai-service/serviceaccount.yaml
+  - ../../base/admin-server/configmap.yaml
+  - ../../base/admin-server/deployment.yaml
+  - ../../base/admin-server/service.yaml
+  - ../../base/admin-server/serviceaccount.yaml
+  - ../../base/ingress/ingress.yaml
