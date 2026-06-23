@@ -116,6 +116,57 @@ module "external_secrets_irsa" {
   tags              = local.common_tags
 }
 
+# PETPLAT-52: GitHub Actions OIDC provider for CI pipeline (account-scoped)
+data "tls_certificate" "github_oidc" {
+  url = "https://token.actions.githubusercontent.com"
+}
+
+resource "aws_iam_openid_connect_provider" "github" {
+  url             = "https://token.actions.githubusercontent.com"
+  client_id_list  = ["sts.amazonaws.com"]
+  thumbprint_list = [for cert in data.tls_certificate.github_oidc.certificates : cert.sha1_fingerprint]
+  tags            = local.common_tags
+}
+
+# PETPLAT-52: IAM policy for GitHub Actions ECR push (least-privilege)
+resource "aws_iam_policy" "github_actions_ecr" {
+  name   = "${var.project}-github-actions-ecr-policy"
+  policy = file("${path.module}/../../policies/github-actions-ecr-policy.json")
+  tags   = local.common_tags
+}
+
+# PETPLAT-52: IAM role for GitHub Actions CI
+resource "aws_iam_role" "github_actions" {
+  name = "${var.project}-github-actions-role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Effect = "Allow"
+      Principal = {
+        Federated = aws_iam_openid_connect_provider.github.arn
+      }
+      Action = "sts:AssumeRoleWithWebIdentity"
+      Condition = {
+        StringEquals = {
+          "token.actions.githubusercontent.com:aud" = "sts.amazonaws.com"
+        }
+        StringLike = {
+          "token.actions.githubusercontent.com:sub" = "repo:PetClinicCloudNative/spring-petclinic-microservices:ref:refs/heads/main"
+        }
+      }
+    }]
+  })
+
+  tags = local.common_tags
+}
+
+# PETPLAT-52: Attach ECR push policy to GitHub Actions role
+resource "aws_iam_role_policy_attachment" "github_actions_ecr" {
+  role       = aws_iam_role.github_actions.name
+  policy_arn = aws_iam_policy.github_actions_ecr.arn
+}
+
 # PETPLAT-32: Wire DNS module into dev environment
 module "dns" {
   source      = "../../modules/dns"

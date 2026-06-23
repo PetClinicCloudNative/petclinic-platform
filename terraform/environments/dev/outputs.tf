@@ -34,3 +34,9 @@ output "external_secrets_irsa_role_arn" {
   description = "IRSA role ARN for External Secrets Operator"
   value       = module.external_secrets_irsa.role_arn
 }
+
+# PETPLAT-52: IAM role ARN for GitHub Actions CI
+output "github_actions_role_arn" {
+  description = "IAM role ARN for GitHub Actions OIDC federation"
+  value       = aws_iam_role.github_actions.arn
+}
