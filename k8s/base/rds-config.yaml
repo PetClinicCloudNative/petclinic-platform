@@ -1,0 +1,10 @@
+# PETPLAT-41: Shared RDS configuration for all database-backed services
+# Centralizes the JDBC connection URL so it is not duplicated across service manifests.
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: rds-config
+  namespace: petclinic-dev
+data:
+  SPRING_DATASOURCE_URL: "jdbc:mysql://petclinic-dev-mysql.c34iswa8k66m.eu-central-1.rds.amazonaws.com:3306/petclinic"
