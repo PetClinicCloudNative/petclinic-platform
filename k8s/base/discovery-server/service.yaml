@@ -1,0 +1,14 @@
+# PETPLAT-40: Discovery Server Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: discovery-server
+  namespace: petclinic-dev
+spec:
+  type: ClusterIP
+  selector:
+    app: discovery-server
+  ports:
+    - port: 8761
+      targetPort: 8761
+      protocol: TCP

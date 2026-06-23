@@ -1,0 +1,9 @@
+# PETPLAT-40: Discovery Server ConfigMap
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: discovery-server
+  namespace: petclinic-dev
+data:
+  SPRING_PROFILES_ACTIVE: "docker"
+  CONFIG_SERVER_URL: "http://config-server:8888"
