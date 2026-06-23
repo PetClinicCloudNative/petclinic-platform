@@ -1,0 +1,18 @@
+# PETPLAT-38: Kubernetes namespace definitions
+# Applied once per cluster; namespaces host all Petclinic workloads and synced secrets.
+
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: petclinic-dev
+  labels:
+    app.kubernetes.io/part-of: petclinic
+    environment: dev
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: petclinic-prod
+  labels:
+    app.kubernetes.io/part-of: petclinic
+    environment: prod
