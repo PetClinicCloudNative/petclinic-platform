@@ -1,0 +1,20 @@
+# PETPLAT-36: ExternalSecret for OpenAI API key
+# Syncs petclinic/dev/openai-api-key from AWS Secrets Manager into the petclinic-dev namespace.
+
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: openai-api-key
+  namespace: petclinic-dev
+spec:
+  refreshInterval: 1h
+  secretStoreRef:
+    kind: ClusterSecretStore
+    name: aws-secrets-manager
+  target:
+    name: openai-api-key
+    creationPolicy: Owner
+  data:
+    - secretKey: OPENAI_API_KEY
+      remoteRef:
+        key: petclinic/dev/openai-api-key
