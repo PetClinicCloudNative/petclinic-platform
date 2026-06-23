@@ -1,0 +1,20 @@
+# PETPLAT-34: External Secrets Operator Helm values
+# Reference: https://external-secrets.io/latest/introduction/getting-started/
+#
+# Install command:
+#   helm repo add external-secrets https://charts.external-secrets.io
+#   helm install external-secrets external-secrets/external-secrets \
+#     --namespace external-secrets --create-namespace \
+#     --values k8s/base/external-secrets/values.yaml
+
+# Install ESO CRDs (ClusterSecretStore, SecretStore, ExternalSecret, etc.)
+installCRDs: true
+
+serviceAccount:
+  # Explicit name to match IRSA trust policy:
+  # system:serviceaccount:external-secrets:external-secrets
+  name: external-secrets
+  create: true
+  annotations:
+    # PETPLAT-37 IRSA role ARN — allows ESO pods to read from AWS Secrets Manager
+    eks.amazonaws.com/role-arn: "arn:aws:iam::522826274224:role/petclinic-dev-external-secrets-role"
