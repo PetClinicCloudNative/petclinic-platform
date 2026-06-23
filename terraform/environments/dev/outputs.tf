@@ -28,3 +28,9 @@ output "alb_sg_id" {
   description = "ALB security group ID"
   value       = module.vpc.alb_sg_id
 }
+
+# PETPLAT-37: IRSA role ARN for External Secrets Operator
+output "external_secrets_irsa_role_arn" {
+  description = "IRSA role ARN for External Secrets Operator"
+  value       = module.external_secrets_irsa.role_arn
+}

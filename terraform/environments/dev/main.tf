@@ -97,6 +97,25 @@ module "lb_controller_irsa" {
   tags              = local.common_tags
 }
 
+# PETPLAT-37: IAM policy for External Secrets Operator
+resource "aws_iam_policy" "external_secrets" {
+  name   = "${var.project}-${var.environment}-external-secrets-policy"
+  policy = file("${path.module}/../../policies/external-secrets-policy.json")
+  tags   = local.common_tags
+}
+
+# PETPLAT-37: IRSA role for External Secrets Operator
+module "external_secrets_irsa" {
+  source            = "../../modules/irsa"
+  role_name         = "${var.project}-${var.environment}-external-secrets-role"
+  namespace         = "external-secrets"
+  service_account   = "external-secrets"
+  oidc_provider_arn = module.eks.oidc_provider_arn
+  oidc_provider_url = module.eks.oidc_provider_url
+  policy_arns       = [aws_iam_policy.external_secrets.arn]
+  tags              = local.common_tags
+}
+
 # PETPLAT-32: Wire DNS module into dev environment
 module "dns" {
   source      = "../../modules/dns"
