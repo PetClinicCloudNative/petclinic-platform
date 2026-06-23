@@ -1,0 +1,14 @@
+# PETPLAT-39: Config Server Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: config-server
+  namespace: petclinic-dev
+spec:
+  type: ClusterIP
+  selector:
+    app: config-server
+  ports:
+    - port: 8888
+      targetPort: 8888
+      protocol: TCP

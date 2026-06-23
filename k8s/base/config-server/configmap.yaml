@@ -1,0 +1,9 @@
+# PETPLAT-39: Config Server ConfigMap
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: config-server
+  namespace: petclinic-dev
+data:
+  SPRING_PROFILES_ACTIVE: "docker"
+  GIT_REPO: "https://github.com/spring-petclinic/spring-petclinic-microservices-config"
