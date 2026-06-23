@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: genai-service
+  namespace: petclinic-dev
+spec:
+  type: ClusterIP
+  selector:
+    app: genai-service
+  ports:
+    - port: 8084
+      targetPort: 8084
+      protocol: TCP
